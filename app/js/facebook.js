@@ -31,38 +31,63 @@ var FB = {
    },
 
    next_url: function() {
-      return FB.paging_url || 'https://graph.facebook.com/me/home?access_token=' + FB.access_token;
+      return FB.paging_previous || 'https://graph.facebook.com/me/home?access_token=' + FB.access_token;
    },
 
    update_status: function(status) {
       document.getElementById('login').innerHTML = status;
    },
 
-   update_feed: function() {
+   update_feed: function(url, cb) {
+      if (typeof url === 'undefined') {
+        url = FB.next_url();
+      }
+      if (typeof cb === 'undefined') {
+        cb = FB.display_feed;
+      }
       FB.update_status('Updating...')
       var xhr = new XMLHttpRequest();
       xhr.onreadystatechange = function() {
          if (xhr.readyState == 4) {
-            FB.display_feed(JSON.parse(xhr.response));
+            cb(JSON.parse(xhr.response));
          }
       }
-      xhr.open('GET', FB.next_url(), true);
+      xhr.open('GET', url, true);
       xhr.send(null);
    },
 
-   display_feed: function (newdata) {
+   display_feed: function (newdata, reverse_order) {
       console.log('display_feed',newdata);
 
       var feed_data =  '';
       newdata.data.forEach(function (item) {
-         feed_data += '<li>' + FB.item_description(item) + '</li>';
+         feed_data += '<div class="fb-item">' + FB.item_description(item) + '</div>';
       });
-      document.getElementById('feed-data').innerHTML = feed_data + document.getElementById('feed-data').innerHTML;
+      if (reverse_order) {
+         document.getElementById('feed-data').innerHTML = document.getElementById('feed-data').innerHTML + feed_data ;
+      } else {
+         document.getElementById('feed-data').innerHTML = feed_data + document.getElementById('feed-data').innerHTML;
+      }
       if (newdata && newdata.paging && newdata.paging.previous) {
-         FB.paging_url = newdata.paging.previous;
+         if (!reverse_order) {
+            FB.paging_previous = newdata.paging.previous;
+         }
+         if (newdata.paging.next !== '') {
+            console.log('next: ', newdata.paging.next);
+            FB.paging_next = newdata.paging.next;
+            document.getElementById('more').innerHTML = 'more';
+         }
       }
 
       FB.update_status('Waiting...')
+   },
+
+   show_more: function() {
+      document.getElementById('more').innerHTML = '';
+      FB.update_feed(FB.paging_next, function(data) {
+         document.getElementById('feed-data').innerHTML += '<hr>';
+         FB.display_feed(data, true);
+      });
    }
 
 }

@@ -21,7 +21,6 @@ window.onload = function(){
    } else {
       document.getElementById('login-link').href = facebook_login_url;
    }
-
 }
 
 
