@@ -17,6 +17,7 @@ var facebook_login_url = 'https://www.facebook.com/dialog/oauth?response_type=to
 window.onload = function(){
    if (FB.get_access_token()) {
       FB.update_feed();
+      document.getElementById('search').className = "";
       window.facebook_timer = setInterval(FB.update_feed, 10000);
    } else {
       document.getElementById('login-link').href = facebook_login_url;

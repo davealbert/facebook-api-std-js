@@ -100,6 +100,20 @@ var FB = {
          document.getElementById('feed-data').innerHTML += '<hr>';
          FB.display_feed(data, true);
       });
+   },
+
+   filter: function() {
+      var text = document.getElementById('search-text').value;
+      var items = document.getElementsByClassName('fb-item');
+
+      for (var i = 0; i < items.length; i++) {
+        var item = items[i];
+        if (item.innerHTML.indexOf(text) === -1 ) {
+            item.className = 'fb-item hidden';
+        } else {
+            item.className = 'fb-item';
+        }
+      };
    }
 
 }

@@ -10,6 +10,11 @@
          <a id="login-link" href="#">Login with Facebook</a>
       </div>
 
+      <div id="search" class="hidden" onkeyup="javascript:FB.filter();">
+         <form>
+            <input type="text" id="search-text" placeholder="search..." />
+         </form>
+      </div>
       <div id="feed-data"> </div>
       <div id="more" onclick="javascript:FB.show_more();"></div>
 
