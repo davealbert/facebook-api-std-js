@@ -16,13 +16,30 @@ html, body {
       margin: 1%;
       background-color: #eceff0;
    }
+   .fb-link {
+      position: relative;
+      bottom: -77px;
+   }
+   .fb-author {
+      text-align: right;
+      padding: 1% 1% 0 0;
+      a {
+         font-style: italic;
+         color: #994500;
+      }
+      img {
+         padding-left: 1%;
+      }
+   }
 }
-#more {
+#more, .fb-update {
   width: 40%;
-  padding: 1%;
   color: blue;
   cursor: pointer;
   text-decoration: underline;
+}
+#more {
+  padding: 1%;
 }
 
 

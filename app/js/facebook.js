@@ -5,8 +5,8 @@ var FB = {
       var return_text = "";
 
       msg.forEach(function(m){
-        if (typeof item[m] !== 'undefined') {
-           return_text = item[m];
+        if (return_text === "" && typeof item[m] !== 'undefined') {
+            return_text = item[m];
         }
       });
 
@@ -41,11 +41,11 @@ var FB = {
    update_feed: function(url, cb) {
       if (typeof url === 'undefined') {
         url = FB.next_url();
+        FB.update_status('Updating...')
       }
       if (typeof cb === 'undefined') {
         cb = FB.display_feed;
       }
-      FB.update_status('Updating...')
       var xhr = new XMLHttpRequest();
       xhr.onreadystatechange = function() {
          if (xhr.readyState == 4) {
@@ -61,7 +61,19 @@ var FB = {
 
       var feed_data =  '';
       newdata.data.forEach(function (item) {
-         feed_data += '<div class="fb-item">' + FB.item_description(item) + '</div>';
+         if (typeof item.picture === 'undefined') { item.picture = ""; }
+         feed_data += '<div class="fb-item">' +
+                        FB.item_description(item) +
+                        '<p><img src="' + item.picture + '" /></p>' +
+                        '<p><a class="fb-link" target="_blank" href="' + item.link + '">link</a></p>' +
+                        '<div class="fb-author"><a href="http://facebook.com/' +
+                        item.from.id +
+                        '">' +
+                        item.from.name +
+                        '</a>' +
+                        '<img src="http://graph.facebook.com/' + item.from.id + '/picture" />' +
+                        '</div>' +
+                      '</div>';
       });
       if (reverse_order) {
          document.getElementById('feed-data').innerHTML = document.getElementById('feed-data').innerHTML + feed_data ;
@@ -79,7 +91,7 @@ var FB = {
          }
       }
 
-      FB.update_status('Waiting...')
+      FB.update_status('<div class="fb-update" onclick="javasctipt:FB.update_feed();">Waiting...</div>')
    },
 
    show_more: function() {
