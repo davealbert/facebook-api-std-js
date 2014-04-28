@@ -18,7 +18,7 @@ window.onload = function(){
    if (FB.get_access_token()) {
       FB.update_feed();
       window.facebook_timer = setInterval(FB.update_feed, 10000);
-   } else { +
+   } else {
       document.getElementById('login-link').href = facebook_login_url;
    }
 }
