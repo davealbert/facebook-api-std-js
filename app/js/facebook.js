@@ -34,6 +34,10 @@ var FB = {
       return FB.paging_previous || 'https://graph.facebook.com/me/home?access_token=' + FB.access_token;
    },
 
+   post_url: function() {
+      return 'https://graph.facebook.com/me/feed?access_token=' + FB.access_token;
+   },
+
    update_status: function(status) {
       document.getElementById('login').innerHTML = status;
    },
@@ -114,6 +118,29 @@ var FB = {
             item.className = 'fb-item';
         }
       };
+   },
+
+   post: function() {
+      var xhr = new XMLHttpRequest();
+      xhr.onreadystatechange = function() {
+         if (xhr.readyState == 4) {
+            FB.postCB(JSON.parse(xhr.response));
+         }
+      }
+      var status_text = document.getElementById('status-text').value;
+      xhr.open('POST', FB.post_url(), true);
+      xhr.send('message=' + status_text);
+   },
+
+   postCB: function(res) {
+     console.log(res);
+     var msg = document.getElementById('post-status-msg');
+     msg.innerHTML = 'Your status has been posted';
+     msg.className ='';
+
+     setTimeout(function() {
+       msg.className = 'hidden';
+     }, 3000);
    }
 
 }

@@ -10,9 +10,16 @@
          <a id="login-link" href="#">Login with Facebook</a>
       </div>
 
-      <div id="search" class="hidden" onkeyup="javascript:FB.filter();">
+      <div id="search" class="hidden">
+         <div id="post-status-msg" class="hidden"></div>
+         <form action="javascript:FB.post();">
+            <textarea id="status-text" rows="5" cols="30" placeholder="Status..."></textarea>
+            <br>
+            <input type="submit" />
+         </form>
+         <br>
          <form>
-            <input type="text" id="search-text" placeholder="search..." />
+            <input type="text" id="search-text" placeholder="search..."  onkeyup="javascript:FB.filter();"/>
          </form>
       </div>
       <div id="feed-data"> </div>

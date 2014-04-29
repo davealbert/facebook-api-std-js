@@ -11,7 +11,7 @@
 */
 var facebook_login_url = 'https://www.facebook.com/dialog/oauth?response_type=token&display=popup&client_id=' +
                            facebook_settings.app_id +
-                           '&redirect_uri=http%3A%2F%2Flocalhost.local&scope=read_stream';
+                           '&redirect_uri=http%3A%2F%2Flocalhost.local&scope=read_stream,publish_actions';
 
 
 window.onload = function(){
