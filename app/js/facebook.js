@@ -1,4 +1,62 @@
+function ajax(url, post_data, cb) {
+   var xhr = new XMLHttpRequest();
+   xhr.onreadystatechange = function() {
+      if (xhr.readyState == 4) {
+         cb(JSON.parse(xhr.response));
+      }
+   }
+   xhr.open('GET', url, true);
+   xhr.send(post_data);
+}
+
+var POST = {
+  link: function(item) {
+     console.log('link');
+     return "";
+  },
+
+  status: function(item) {
+     console.log('status');
+     return "";
+  },
+
+  photo: function(item) {
+     console.log('photo');
+     return "";
+  },
+
+  video: function(item) {
+     console.log('video');
+     return "";
+  }
+};
+
 var FB = {
+
+   build_message: function(item){
+      var msg = "";
+      try {
+        msg = POST[item.type](item);
+      } catch(e) {
+        console.log('err: ', e.message);
+      }
+
+      if (msg !== "") return msg;
+
+      return '<div class="fb-item">' +
+         FB.item_description(item) +
+         '<p><img src="' + item.picture + '" /></p>' +
+         '<p><a class="fb-link" target="_blank" href="' + item.link + '">link</a></p>' +
+         '<div class="fb-author"><a href="http://facebook.com/' +
+         item.from.id +
+         '">' +
+         item.from.name +
+         '</a>' +
+         '<img src="http://graph.facebook.com/' + item.from.id + '/picture" />' +
+         '</div>' +
+       '</div>';
+
+   },
 
    item_description: function(item) {
       var msg = ['message', 'story', 'caption'];
@@ -50,14 +108,7 @@ var FB = {
       if (typeof cb === 'undefined') {
         cb = FB.display_feed;
       }
-      var xhr = new XMLHttpRequest();
-      xhr.onreadystatechange = function() {
-         if (xhr.readyState == 4) {
-            cb(JSON.parse(xhr.response));
-         }
-      }
-      xhr.open('GET', url, true);
-      xhr.send(null);
+      ajax(url, null, console.log);
    },
 
    display_feed: function (newdata, reverse_order) {
@@ -66,18 +117,7 @@ var FB = {
       var feed_data =  '';
       newdata.data.forEach(function (item) {
          if (typeof item.picture === 'undefined') { item.picture = ""; }
-         feed_data += '<div class="fb-item">' +
-                        FB.item_description(item) +
-                        '<p><img src="' + item.picture + '" /></p>' +
-                        '<p><a class="fb-link" target="_blank" href="' + item.link + '">link</a></p>' +
-                        '<div class="fb-author"><a href="http://facebook.com/' +
-                        item.from.id +
-                        '">' +
-                        item.from.name +
-                        '</a>' +
-                        '<img src="http://graph.facebook.com/' + item.from.id + '/picture" />' +
-                        '</div>' +
-                      '</div>';
+         feed_data += FB.build_message(item)
       });
       if (reverse_order) {
          document.getElementById('feed-data').innerHTML = document.getElementById('feed-data').innerHTML + feed_data ;
@@ -89,7 +129,6 @@ var FB = {
             FB.paging_previous = newdata.paging.previous;
          }
          if (newdata.paging.next !== '') {
-            console.log('next: ', newdata.paging.next);
             FB.paging_next = newdata.paging.next;
             document.getElementById('more').innerHTML = 'more';
          }
@@ -121,26 +160,19 @@ var FB = {
    },
 
    post: function() {
-      var xhr = new XMLHttpRequest();
-      xhr.onreadystatechange = function() {
-         if (xhr.readyState == 4) {
-            FB.postCB(JSON.parse(xhr.response));
-         }
-      }
       var status_text = document.getElementById('status-text').value;
-      xhr.open('POST', FB.post_url(), true);
-      xhr.send('message=' + status_text);
-   },
+      // TODO: clear not working yet
+      document.getElementById('status-text').value = "";
+      ajax(FB.post_url(), 'message=' + status_text, function(res) {
+        console.log(res);
+        var msg = document.getElementById('post-status-msg');
+        msg.innerHTML = 'Your status has been posted';
+        msg.className ='';
 
-   postCB: function(res) {
-     console.log(res);
-     var msg = document.getElementById('post-status-msg');
-     msg.innerHTML = 'Your status has been posted';
-     msg.className ='';
-
-     setTimeout(function() {
-       msg.className = 'hidden';
-     }, 3000);
+        setTimeout(function() {
+          msg.className = 'hidden';
+        }, 5000);
+     });
    }
 
 }
