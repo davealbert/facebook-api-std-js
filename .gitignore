@@ -32,3 +32,4 @@ public/css/*
 public/js/*
 .sass-cache/
 
+.DS_Store
